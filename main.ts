@@ -33,34 +33,11 @@ namespace AnyProp {
 // 2 = shocked
 // 
 // 3 = happy
-function happyEnding () {
-    happy1 = createScript("Pineapple", "That's right! Such a polite young man!", 0)
-    happy2 = createScript("Mr. Kao", "HaHaHa! What a flatterer. Take this flower as a token of my gratitude.", 3)
-    happy3 = createScript("Pineapple", "Oh, it's beautiful! Needs some water though.", 4)
-    happy4 = createScript("Mr. Kao", "Alright....", 1)
-    blockObject.setAnyProperty(happy1, AnyProp.NextPage, happy2)
-    blockObject.setAnyProperty(happy2, AnyProp.NextPage, happy3)
-    blockObject.setAnyProperty(happy3, AnyProp.NextPage, happy4)
-    return happy1
-}
-function imSorry () {
-    imsorry1 = createScript("Mr. Kao", "Ok, I'm sorry, I will pay my water bill", 0)
-    imsorry2 = createScript("Pineapple", "Yes, and here's your punishment for paying late", 1)
-    imsorry3 = createScript("Mr. Kao", "OUCH!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1111", 4)
-    blockObject.setAnyProperty(imsorry1, AnyProp.NextPage, imsorry2)
-    blockObject.setAnyProperty(imsorry2, AnyProp.NextPage, imsorry3)
-    blockObject.setAnyProperty(imsorry3, AnyProp.NextPage, finalChoice())
-    return imsorry1
-}
+
 // microsoft/arcade-block-objects
 // 
 // riknoll/arcade-story
-controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
-    if (choiceIndex == 1) {
-        choiceIndex = 0
-        updateChoices()
-    }
-})
+
 /**
  * START
  */
@@ -73,22 +50,74 @@ function createConversation () {
     blockObject.setAnyProperty(nextPage, AnyProp.Choice2, imSorry())
     currentScript = startScript
 }
-function printScript (name: string, text: string, portrait: number) {
-    story.queueStoryPart(function () {
-        if (name == "Mr. Kao") {
-            character1.setImage(oldGuyPortraits[portrait])
-            character1.setPosition(40, 30)
-        } else {
-            character2.setImage(cloudPortraits[portrait])
-            character2.setPosition(120, 30)
-        }
-        currentName.setText(name)
-        currentName.setFlag(SpriteFlag.Invisible, false)
-        story.printDialog(text, 80, 90, 50, 150, 15, 1, story.TextSpeed.Normal)
-    })
-    story.queueStoryPart(function () {
-        currentName.setFlag(SpriteFlag.Invisible, true)
-    })
+
+function imAnOldMan() {
+    oldman1 = createScript("Mr. Kao", "I'm just an old man and I spent all my money gambling, please help me!!!", 3)
+    oldman2 = createScript("Pineapple", "OK, just give me $2 and I will get you water", 3)
+    blockObject.setAnyProperty(oldman1, AnyProp.NextPage, oldman2)
+    blockObject.setStringArrayProperty(oldman2, StrArrayProp.Choices, ["OK here's $2!", "NO MONEY FOR YOU!!"])
+    blockObject.setAnyProperty(oldman2, AnyProp.Choice1, happyEnding())
+    blockObject.setAnyProperty(oldman2, AnyProp.Choice2, noMoneyForYou())
+    return oldman1
+}
+function imSorry() {
+    imsorry1 = createScript("Mr. Kao", "Ok, I'm sorry, I will pay my water bill", 0)
+    imsorry2 = createScript("Pineapple", "Yes, and here's your punishment for paying late", 1)
+    imsorry3 = createScript("Mr. Kao", "OUCH!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1111", 4)
+    blockObject.setAnyProperty(imsorry1, AnyProp.NextPage, imsorry2)
+    blockObject.setAnyProperty(imsorry2, AnyProp.NextPage, imsorry3)
+    blockObject.setAnyProperty(imsorry3, AnyProp.NextPage, finalChoice())
+    return imsorry1
+}
+
+
+function noMoneyForYou() {
+    nomoneyforyou1 = createScript("Mr. Kao", "I'm tired of you always asking me for money! GO AWAY!", 2)
+    nomoneyforyou2 = createScript("Pineapple", "OK, I'll give you a deal! Buy two get one free!", 3)
+    nomoneyforyou3 = createScript("Pineapple", "$4 for 2 water and Cheetos!! :)", 0)
+    blockObject.setAnyProperty(nomoneyforyou1, AnyProp.NextPage, nomoneyforyou2)
+    blockObject.setAnyProperty(nomoneyforyou2, AnyProp.NextPage, nomoneyforyou3)
+    return nomoneyforyou1
+}
+function finalChoice() {
+    FinalChoice1 = createScript("Mr. Kao", "Well, I just need enough water for this garden here", 0)
+    FinalChoice2 = createScript("Pineapple", "I can make that happen! What's the magic word?", 0)
+    blockObject.setAnyProperty(FinalChoice1, AnyProp.NextPage, FinalChoice2)
+    blockObject.setStringArrayProperty(FinalChoice2, StrArrayProp.Choices, ["Please!", "BUZZ OFF!!!!"])
+    blockObject.setAnyProperty(FinalChoice2, AnyProp.Choice1, happyEnding())
+    blockObject.setAnyProperty(FinalChoice2, AnyProp.Choice2, 0)
+    return FinalChoice1
+}
+function happyEnding() {
+    happy1 = createScript("Pineapple", "That's right! Such a polite young man!", 0)
+    happy2 = createScript("Mr. Kao", "HaHaHa! What a flatterer. Take this flower as a token of my gratitude.", 3)
+    happy3 = createScript("Pineapple", "Oh, it's beautiful! Needs some water though.", 4)
+    happy4 = createScript("Mr. Kao", "Alright....", 1)
+    blockObject.setAnyProperty(happy1, AnyProp.NextPage, happy2)
+    blockObject.setAnyProperty(happy2, AnyProp.NextPage, happy3)
+    blockObject.setAnyProperty(happy3, AnyProp.NextPage, happy4)
+    return happy1
+}
+controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
+    if (choiceIndex == 1) {
+        choiceIndex = 0
+        updateChoices()
+    }
+})
+controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
+    if (choiceIndex == 0) {
+        choiceIndex = 1
+        updateChoices()
+    }
+})
+function updateChoices() {
+    if (choiceIndex == 0) {
+        choice1.setOutline(1, 10)
+        choice2.setOutline(1, 0)
+    } else {
+        choice2.setOutline(1, 10)
+        choice1.setOutline(1, 0)
+    }
 }
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     if (makingChoice) {
@@ -105,33 +134,31 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
         printCurrentScript()
     }
 })
-function noMoneyForYou () {
-    nomoneyforyou1 = createScript("Mr. Kao", "I'm tired of you always asking me for money! GO AWAY!", 2)
-    nomoneyforyou2 = createScript("Pineapple", "OK, I'll give you a deal! Buy two get one free!", 3)
-    nomoneyforyou3 = createScript("Pineapple", "$4 for 2 water and Cheetos!! :)", 0)
-    blockObject.setAnyProperty(nomoneyforyou1, AnyProp.NextPage, nomoneyforyou2)
-    blockObject.setAnyProperty(nomoneyforyou2, AnyProp.NextPage, nomoneyforyou3)
-    return nomoneyforyou1
+function printScript(name: string, text: string, portrait: number) {
+    story.queueStoryPart(function () {
+        if (name == "Mr. Kao") {
+            character1.setImage(oldGuyPortraits[portrait])
+            character1.setPosition(40, 30)
+        } else {
+            character2.setImage(cloudPortraits[portrait])
+            character2.setPosition(120, 30)
+        }
+        currentName.setText(name)
+        currentName.setFlag(SpriteFlag.Invisible, false)
+        story.printDialog(text, 80, 90, 50, 150, 15, 1, story.TextSpeed.Normal)
+    })
+    story.queueStoryPart(function () {
+        currentName.setFlag(SpriteFlag.Invisible, true)
+    })
 }
-function finalChoice () {
-    FinalChoice1 = createScript("Mr. Kao", "Well, I just need enough water for this garden here", 0)
-    FinalChoice2 = createScript("Pineapple", "I can make that happen! What's the magic word?", 0)
-    blockObject.setAnyProperty(FinalChoice1, AnyProp.NextPage, FinalChoice2)
-    blockObject.setStringArrayProperty(FinalChoice2, StrArrayProp.Choices, ["Please!", "BUZZ OFF!!!!"])
-    blockObject.setAnyProperty(FinalChoice2, AnyProp.Choice1, happyEnding())
-    blockObject.setAnyProperty(FinalChoice2, AnyProp.Choice2, 0)
-    return FinalChoice1
+function createScript (characterName: string, text: string, portrait: number) {
+    newScript = blockObject.create()
+    blockObject.setStringProperty(newScript, StrProp.Name, characterName)
+    blockObject.setStringProperty(newScript, StrProp.Text, text)
+    blockObject.setNumberProperty(newScript, NumProp.Portrait, portrait)
+    return newScript
 }
-function updateChoices () {
-    if (choiceIndex == 0) {
-        choice1.setOutline(1, 10)
-        choice2.setOutline(1, 0)
-    } else {
-        choice2.setOutline(1, 10)
-        choice1.setOutline(1, 0)
-    }
-}
-function printCurrentScript () {
+function printCurrentScript() {
     printingStuff = true
     printScript(blockObject.getStringProperty(currentScript, StrProp.Name), blockObject.getStringProperty(currentScript, StrProp.Text), blockObject.getNumberProperty(currentScript, NumProp.Portrait))
     while (blockObject.hasAnyProperty(currentScript, AnyProp.NextPage)) {
@@ -154,28 +181,6 @@ function printCurrentScript () {
             game.over(true)
         }
     })
-}
-function imAnOldMan () {
-    oldman1 = createScript("Mr. Kao", "I'm just an old man and I spent all my money gambling, please help me!!!", 3)
-    oldman2 = createScript("Pineapple", "OK, just give me $2 and I will get you water", 3)
-    blockObject.setAnyProperty(oldman1, AnyProp.NextPage, oldman2)
-    blockObject.setStringArrayProperty(oldman2, StrArrayProp.Choices, ["OK here's $2!", "NO MONEY FOR YOU!!"])
-    blockObject.setAnyProperty(oldman2, AnyProp.Choice1, happyEnding())
-    blockObject.setAnyProperty(oldman2, AnyProp.Choice2, noMoneyForYou())
-    return oldman1
-}
-controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
-    if (choiceIndex == 0) {
-        choiceIndex = 1
-        updateChoices()
-    }
-})
-function createScript (characterName: string, text: string, portrait: number) {
-    newScript = blockObject.create()
-    blockObject.setStringProperty(newScript, StrProp.Name, characterName)
-    blockObject.setStringProperty(newScript, StrProp.Text, text)
-    blockObject.setNumberProperty(newScript, NumProp.Portrait, portrait)
-    return newScript
 }
 let newScript: blockObject.BlockObject = null
 let oldman2: blockObject.BlockObject = null
